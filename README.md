@@ -10,3 +10,4 @@ npm packages : (1) npm create vite@latest
 (4) npm i -D daisyui@latest
 (5) npm install react-icons --save
 (6) npm install react-router-dom
+(7) npm install firebase

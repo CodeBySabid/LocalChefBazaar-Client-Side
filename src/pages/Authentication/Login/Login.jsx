@@ -23,7 +23,7 @@ const Login = () => {
                     </div>
                     <Link className="text-xs pl-3 my-2.5 hover:text-red-800 cursor-pointer text-start text-white">Forgot Password</Link>
                         <button className="button1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Login&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
-                    <p className='text-xs my-2 text-white'>Dont’t Have An Account ?<Link className='text-red-600' to={'/register'}> Registration</Link></p>
+                    <p className='text-xs mt-2 mb-4 text-white'>Dont’t Have An Account ?<Link className='text-red-600' to={'/register'}> Registration</Link></p>
                 </form>
             </div>
         </div>

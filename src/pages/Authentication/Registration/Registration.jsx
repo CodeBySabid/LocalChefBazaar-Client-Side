@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { Link } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import './registration.css'
+import { AuthContext } from '../../../providers/AuthContext';
+import { updateProfile } from 'firebase/auth';
+import { toast, ToastContainer } from 'react-toastify';
 
 const Registration = () => {
+    const { createUser } = useContext(AuthContext);
     const [showPassword, setShowPassword] = useState(null)
     const [showConfirmPassword, setShowConfirmPassword] = useState(null)
-    const handleform = (event) => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const handleCreateUser = (event) => {
         event.preventDefault();
         const name = event.target.name.value;
         const email = event.target.email.value;
@@ -15,31 +21,61 @@ const Registration = () => {
         const confirmPassword = event.target.confirmpassword.value;
         console.log(name, email, photoURL, password, confirmPassword);
         if (name === '' && email === '' && photoURL === '' && password === '' && confirmPassword === '') {
-            alert('place fill up all the filds')
+            toast.error('place fill up all the filds')
+            return;
         }
         else if (name === '') {
-            alert('enter you name')
+            toast.error('enter you name')
+            return;
         }
         else if (email === '') {
-            alert('enter you email')
+            toast.error('enter you email')
+            return;
         }
         else if (photoURL === '') {
-            alert('enter you photourl')
+            toast.error('enter you photourl')
+            return;
         }
         else if (password === '') {
-            alert('enter you name')
+            toast.error('enter you name')
+            return;
         }
         else if (confirmPassword === '') {
-            alert('enter you name')
+            toast.error('enter you name')
+            return;
         }
         else if (password !== confirmPassword) {
-            alert('password is not mach comfirmpassword')
+            toast.error('password is not mach comfirmpassword')
+            return;
         }
+        createUser(email, password) 
+        .then((result) => {
+            const user = result.user;
+            updateProfile(user, {
+                displayName: name,
+                photoURL: photoURL,
+            })
+            .then(() => {
+                toast.success("Successfully Register");
+                navigate(location.state || '/');
+            })
+            .catch((error) => {
+                toast.error(error.message);
+            })
+        })
+        .catch(error => {
+            if(error.code === "auth/email-already-in-use"){
+                toast.error("This email is already registered. Please login!");
+            }
+            else(
+                toast.error(error.message)
+            )
+        })
     }
     return (
         <div className='w-full h-[95vh] flex items-center justify-center mt-5'>
             <div className='max-w-[600px]'>
-                <form onSubmit={handleform} className="forms w-[400px] max-sm:w-full px-7">
+                <form onSubmit={handleCreateUser} className="forms w-[400px] max-sm:w-full px-7">
                     <p id="headings" className='my-2.5'>Registration</p>
                     <div className="field mb-2.5">
                         <input placeholder="Email" name='email' className="input-field" type="Email"></input>
@@ -68,10 +104,10 @@ const Registration = () => {
                     </div>
                     <Link className="text-xs pl-3 my-2.5 hover:text-red-800 cursor-pointer text-start text-white">Forgot Password</Link>
                     <button className="button1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Registration&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
-                    <p className='text-[14px] mt-2'>Already have an account? <Link className='text-red-600' to={'/login'}>Login</Link></p>
+                    <p className='text-[14px] mt-2 mb-4 text-white'>Already have an account? <Link className='text-red-600' to={'/login'}>Login</Link></p>
                 </form>
             </div>
-            
+            <ToastContainer></ToastContainer>
         </div>
     );
 };
